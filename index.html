@@ -25,9 +25,13 @@
     var ball_launched;
     var ball_velocity;
 
+    var score1_text;
+    var score2_text;
+
     function preload() {
       game.load.image('paddle', 'assets/paddle.png');
       game.load.image('ball', 'assets/ball.png');
+      game.load.bitmapFont('font','assets/font.png','assets/font.xml');
     }
 
     function create() {
@@ -39,17 +43,19 @@
       paddle2 = create_paddle(game.world.width - 1, game.world.centerY);
       ball = create_ball(game.world.centerX, game.world.centerY);
       game.input.onDown.add(launch_ball, this);
+
+      score1_text = game.add.bitmapText(8,0,'font','0',6);
+      score2_text = game.add.bitmapText(game.world.width - 12,0,'font','0',6);
     }
 
     function update() {
       control_paddle(paddle1, game.input.y)
-      game.physics.arcade.collide(paddle1,ball)
-      game.physics.arcade.collide(paddle2,ball)
+      game.physics.arcade.collide(paddle1, ball)
+      game.physics.arcade.collide(paddle2, ball)
 
-      if (ball.body.blocked.left){
+      if (ball.body.blocked.left) {
         console.log('Player 2 Scores!')
-      }
-      else if (ball.body.blocked.right){
+      } else if (ball.body.blocked.right) {
         console.log('Player 1 Scores!')
       }
 
