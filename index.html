@@ -1,54 +1,89 @@
 <html>
+
 <head>
   <title> Pong </title>
   <script src="//cdn.jsdelivr.net/phaser-ce/2.7.5/phaser.js"></script>
-  <style type = 'text/css'>
-  body {
-    margin:0;
-  }
+  <style type='text/css'>
+    body {
+      margin: 0;
+    }
   </style>
 </head>
+
 <body>
-  <script type = 'text/javascript'>
-  var game = new Phaser.Game(31,31,Phaser.AUTO,'',{
-    preload : preload,
-    create : create,
-    update : update
-  });
+  <script type='text/javascript'>
+    var game = new Phaser.Game(31, 31, Phaser.AUTO, '', {
+      preload: preload,
+      create: create,
+      update: update
+    });
 
-  var paddle1;
-  var paddle2;
+    var paddle1;
+    var paddle2;
+    var bounceX;
+    var bounceY;
+    var ball_launched;
+    var ball_velocity;
 
-  function preload(){
-    game.load.image('paddle', 'assets/paddle.png');
-  }
-
-  function create(){
-    paddle1 = create_paddle(0,game.world.centerY);
-    paddle2 = create_paddle(game.world.width - 0.5 ,game.world.centerY);
-  }
-
-  function update(){
-    control_paddle(paddle1,game.input.y)
-  }
-
-  function create_paddle(x,y){
-    var paddle = game.add.sprite(x,y,'paddle')
-    paddle.anchor.setTo(0.5,0.5);
-    game.physics.arcade.enable(paddle);
-    paddle.body.collideWorldBounds = true;
-    return paddle;
-  }
-
-  function control_paddle(paddle,y){
-    paddle.y = y;
-    if (paddle.y < paddle.height / 2) {
-      paddle.y = paddle.height /2;
-    } else if (paddle.y > game.world.height - paddle.height /2){
-      paddle.y = game.world.height - paddle.height /2;
+    function preload() {
+      game.load.image('paddle', 'assets/paddle.png');
+      game.load.image('ball', 'assets/ball.png');
     }
-  }
 
+    function create() {
+      bounceX = 1;
+      bounceY = 1;
+      ball_launched = false;
+      ball_velocity = 10;
+      paddle1 = create_paddle(0, game.world.centerY);
+      paddle2 = create_paddle(game.world.width - 0.5, game.world.centerY);
+      ball = create_ball(game.world.centerX, game.world.centerY);
+      game.input.onDown.add(launch_ball, this);
+    }
+
+    function update() {
+      control_paddle(paddle1, game.input.y)
+    }
+
+    function create_paddle(x, y) {
+      var paddle = game.add.sprite(x, y, 'paddle')
+      paddle.anchor.setTo(0.5, 0.5);
+      game.physics.arcade.enable(paddle);
+      paddle.body.collideWorldBounds = true;
+      return paddle;
+    }
+
+    function create_ball(x, y) {
+      var ball = game.add.sprite(x, y, 'ball')
+      ball.anchor.setTo(0.5, 0.5);
+      game.physics.arcade.enable(ball);
+      ball.body.collideWorldBounds = true;
+      ball.body.bounce.setTo(bounceX, bounceY);
+      return ball;
+    }
+
+    function control_paddle(paddle, y) {
+      paddle.y = y;
+      if (paddle.y < paddle.height / 2) {
+        paddle.y = paddle.height / 2;
+      } else if (paddle.y > game.world.height - paddle.height / 2) {
+        paddle.y = game.world.height - paddle.height / 2;
+      }
+    }
+
+    function launch_ball() {
+      if (ball_launched) {
+        ball.x = game.world.centreX;
+        ball.y = game.world.centreY;
+        ball.body.velocity.setTo(0, 0);
+        ball_launched = false;
+      } else {
+        ball.body.velocity.x -= -ball_velocity;
+        ball.body.velocity.y -= ball_velocity;
+        ball_launched = true;
+      }
+    }
   </script>
 </body>
+
 </html>
