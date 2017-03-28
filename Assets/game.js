@@ -33,6 +33,8 @@ function create() {
   paddle2 = create_paddle(game.world.width - 1, game.world.centerY);
   ball = create_ball(game.world.centerX, game.world.centerY);
   game.input.onDown.add(launch_ball, this);
+  cursors = game.input.keyboard.createCursorKeys();
+
 
   score1_text = game.add.text(8, 0, '0', {
     font: '8px Ariel',
@@ -49,35 +51,40 @@ function create() {
 function update() {
   score1_text.text = score1;
   score2_text.text = score2;
-  control_paddle(paddle1, game.input.y)
-  game.physics.arcade.collide(paddle1, ball)
-  game.physics.arcade.collide(paddle2, ball)
+  // control_paddle(paddle1, game.input.y);
+
+  if (cursors.up.isDown) {
+    control_paddle(paddle1, paddle1.y - 1)
+  } else if (cursors.down.isDown) {
+    control_paddle(paddle1, paddle1.y + 1)
+  }
 
   if (ball.body.blocked.left) {
-    console.log('Player 2 Scores!')
+    console.log('Player 2 Scores!');
     score2 += 1;
   } else if (ball.body.blocked.right) {
-    console.log('Player 1 Scores!')
+    console.log('Player 1 Scores!');
     score1 += 1;
   }
 
-  paddle2.body.velocity.setTo(ball.body.velocity.y)
+  paddle2.body.velocity.setTo(ball.body.velocity.y);
   paddle2.body.velocity.x = 0;
   paddle2.body.maxVelocity.y = 4;
+  game.physics.arcade.collide(paddle1, ball);
+  game.physics.arcade.collide(paddle2, ball);
 }
 
 function create_paddle(x, y) {
-  var paddle = game.add.sprite(x, y, 'paddle')
+  var paddle = game.add.sprite(x, y, 'paddle');
   paddle.anchor.setTo(0.5, 0.5);
   game.physics.arcade.enable(paddle);
   paddle.body.collideWorldBounds = true;
   paddle.body.immovable = true;
-  // paddle.scale.setTo(0.7,0.7);
   return paddle;
 }
 
 function create_ball(x, y) {
-  var ball = game.add.sprite(x, y, 'ball')
+  var ball = game.add.sprite(x, y, 'ball');
   ball.anchor.setTo(0.5, 0.5);
   game.physics.arcade.enable(ball);
   ball.body.collideWorldBounds = true;
